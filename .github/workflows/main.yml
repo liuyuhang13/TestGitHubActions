@@ -1,0 +1,52 @@
+name: Update release branch from main
+
+on: workflow_dispatch
+  
+concurrency: ${{ github.workflow }}
+
+env:
+  main_dir: main
+  release_dir: release
+  test_dir: test
+
+permissions:
+  # Required to clone repo
+  contents: read
+
+jobs:
+  update_release_branch:
+    name: Update release branch
+    if: "github.ref == 'refs/heads/main'"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone main branch
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.main_dir }}
+
+      - name: Clone release branch
+        uses: actions/checkout@v3
+        with:
+          ref: release
+          path: ${{ env.release_dir }}
+
+      - name: Copy dirs from main to release
+        run:
+          cp -avr ${{ env.main_dir }}/${{ env.test_dir }}/. ${{ env.release_dir }}/${{ env.test_dir }}
+      - name: Create commit and push
+        env: 
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_COMMITTER_NAME: GitHub
+          GIT_COMMITTER_EMAIL: noreply@github.com
+        run: |
+          if [[ -z $(git status -s) ]]; then
+            echo "No updates to the release branch"
+            exit 0
+          fi
+          git status
+          git add -A .
+          # git commit -m "Update release branch" -m "Automated updates made by [$GITHUB_WORKFLOW]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
+          # git push
+        working-directory: ${{ env.release_dir }}
+  
