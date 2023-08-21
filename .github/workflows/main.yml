@@ -10,8 +10,8 @@ env:
   test_dir: test
 
 permissions:
-  # Required to clone repo
-  contents: read
+  # Required to clone repo and push commits
+  contents: read|write
 
 jobs:
   update_release_branch:
