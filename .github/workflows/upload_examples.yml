@@ -25,10 +25,12 @@ jobs:
           base_path=${{ env.release_branch }}/${{ env.examples_dir }}
           for D in $base_path/*; do
             if [ -d "${D}" ]; then
+              temp_file=`basename $D`
               echo $D
+              echo $temp_file
               ls $D
-              # mkdir -p ${{ env.examples_dir }}/$D/v2/model_folder
-              # mv $base_path/$D/* ${{ env.examples_dir }}/$D/v2/model_folder
+              mkdir -p ${{ env.examples_dir }}/$temp_file/v2/model_folder
+              mv $base_path/$D/* ${{ env.examples_dir }}/$temp_file/v2/model_folder
             fi
           done
           ls ${{ env.examples_dir }}
