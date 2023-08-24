@@ -1,12 +1,17 @@
-name: Update release branch from main
+name: Update target branch from main
 
-on: workflow_dispatch
-  
+on:
+  workflow_dispatch:
+    inputs:
+      targetBranch:
+        description: 'Target branch'     
+        required: true
+        default: 'release'
 concurrency: ${{ github.workflow }}
 
 env:
   main_dir: main
-  release_dir: release
+  release_dir: ${{ github.event.inputs.targetBranch }}
   test_dir: test
 
 permissions:
@@ -28,7 +33,7 @@ jobs:
       - name: Clone release branch
         uses: actions/checkout@v3
         with:
-          ref: release
+          ref: ${{ env.release_dir }}
           path: ${{ env.release_dir }}
 
       - name: Copy dirs from main to release
