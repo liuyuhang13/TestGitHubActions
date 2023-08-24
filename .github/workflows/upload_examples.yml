@@ -1,0 +1,45 @@
+name: Upload examples
+on: workflow_dispatch
+
+env:
+  release_branch: release
+  examples_dir: test
+
+jobs:
+  upload_examples_to_promptflowsamples:
+    name: Upload examples
+    if: "github.ref == 'refs/heads/main'"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone release branch
+        uses: actions/checkout@v3
+        with:
+          ref: release
+          path: ${{ env.release_branch }}
+
+      - name: Setup folder with new structure for upload
+        run: |
+          base_path=${{ env.release_branch }}/${{ env.examples_dir }}
+          for D in $base_path/*; do
+            if [ -d "${D}" ]; then
+              echo $base_path/$D
+              ls $base_path/$D
+              mkdir -p ${{ env.examples_dir }}/$D/v2/model_folder
+              mv $base_path/$D/* ${{ env.examples_dir }}/$D/v2/model_folder
+            fi
+          done
+          ls ${{ env.examples_dir }}
+          
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_CRE }}
+      - name: Upload to blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload-batch --account-name promptflowsamples --auth-mode key -d models --destination-path samples -s ${{ env.examples_dir }}
+      - name: logout
+        run: |
+          az logout
+        if: always()
