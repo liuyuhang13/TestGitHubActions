@@ -30,13 +30,13 @@ jobs:
         with:
           path: ${{ env.main_dir }}
 
-      - name: Clone release branch
+      - name: Clone ${{ env.release_dir }} branch
         uses: actions/checkout@v3
         with:
           ref: ${{ env.release_dir }}
           path: ${{ env.release_dir }}
 
-      - name: Copy dirs from main to release
+      - name: Copy dirs from main to ${{ env.release_dir }}
         run: |
           rm -rv ${{ env.release_dir }}/${{ env.test_dir }}
           cp -avr ${{ env.main_dir }}/${{ env.test_dir }}/. ${{ env.release_dir }}/${{ env.test_dir }}
