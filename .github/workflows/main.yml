@@ -32,7 +32,8 @@ jobs:
           path: ${{ env.release_dir }}
 
       - name: Copy dirs from main to release
-        run:
+        run: |
+          rm -rv ${{ env.release_dir }}/${{ env.test_dir }}
           cp -avr ${{ env.main_dir }}/${{ env.test_dir }}/. ${{ env.release_dir }}/${{ env.test_dir }}
       - name: Create commit and push
         env: 
