@@ -29,8 +29,8 @@ jobs:
               echo $D
               echo $temp_file
               ls $D
-              mkdir -p ${{ env.examples_dir }}/$temp_file/v2/model_folder
-              mv $D/* ${{ env.examples_dir }}/$temp_file/v2/model_folder
+              mkdir -pr ${{ env.examples_dir }}/$temp_file/v2/model_folder
+              mv -v $D/* ${{ env.examples_dir }}/$temp_file/v2/model_folder
             fi
           done
           ls ${{ env.examples_dir }}
