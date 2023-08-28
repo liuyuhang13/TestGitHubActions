@@ -31,9 +31,9 @@ jobs:
           GIT_COMMITTER_NAME: GitHub
           GIT_COMMITTER_EMAIL: noreply@github.com
         run: |
-          git checkout main
+          git switch main
           git fetch origin
-          git checkout test
+          git switch test
           git pull
           git merge origin/main
           git push origin test  
