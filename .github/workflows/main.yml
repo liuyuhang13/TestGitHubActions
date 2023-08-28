@@ -9,11 +9,6 @@ on:
         default: 'release'
 concurrency: ${{ github.workflow }}
 
-env:
-  main_dir: main
-  release_dir: ${{ github.event.inputs.targetBranch }}
-  test_dir: test
-
 permissions:
   # Required to clone repo and push commits
   contents: write
@@ -28,31 +23,17 @@ jobs:
       - name: Clone main branch
         uses: actions/checkout@v3
         with:
-          path: ${{ env.main_dir }}
-
-      - name: Clone ${{ env.release_dir }} branch
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ env.release_dir }}
-          path: ${{ env.release_dir }}
-
-      - name: Copy dirs from main to ${{ env.release_dir }}
-        run: |
-          rm -rv ${{ env.release_dir }}/${{ env.test_dir }}
-          cp -avr ${{ env.main_dir }}/${{ env.test_dir }}/. ${{ env.release_dir }}/${{ env.test_dir }}
-      - name: Create commit and push
+          fetch-depth: 0
+        
+      - name: Update tewst branch
         env: 
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_NAME: GitHub
           GIT_COMMITTER_EMAIL: noreply@github.com
         run: |
-          if [[ -z $(git status -s) ]]; then
-            echo "No updates to the release branch"
-            exit 0
-          fi
-          git status
-          git add *
-          git commit -m "Update release branch" -m "Automated updates made by [$GITHUB_WORKFLOW]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
-          git push
-        working-directory: ${{ env.release_dir }}
-  
+          git checkout main
+          git fetch origin
+          git checkout test
+          git pull
+          git merge origin/main
+          git push origin test  
