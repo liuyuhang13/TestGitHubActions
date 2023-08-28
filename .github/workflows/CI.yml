@@ -39,10 +39,17 @@ jobs:
           fi 
   
   continuous_delivery_release:
-    if:  ${{ jobs.check_for_changes.outputs.run_release == 'true' }} 
     needs: check_for_changes
     runs-on: ubuntu-latest
     name: Continuous delivery release
     steps:
       - name: echo hello
-        run: echo "hello world, ${{needs.check_for_changes.outputs.run_release}}"
+        run: |
+          if [ ${{needs.check_for_changes.outputs.run_release}} == "true"]; then
+            echo "hello world, ${{needs.check_for_changes.outputs.run_release}}"
+          else
+            echo "hello world, ${{needs.check_for_changes.outputs.run_release}}"
+            exit -1
+          fi
+      - name: task
+        run: echo "hello"
