@@ -19,8 +19,6 @@ jobs:
   check_for_changes:
     runs-on: ubuntu-latest
     name: Check for tools folder changes
-    outputs:
-      run_release: ${{ steps.check_changes.outputs.run_release }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,14 +30,14 @@ jobs:
           CHANGED=$(git diff --name-only FETCH_HEAD..HEAD -- 'test')  
           if [ -n "$CHANGED" ]; then  
             echo "Changes detected in test"  
-            echo "run_release=true" >> $GITHUB_OUTPUT
+            echo "run_release=true" >> "$GITHUB_ENV"
           else  
             echo "No changes detected in test"
-            echo "run_release=false" >> $GITHUB_OUTPUT
+            echo "run_release=false" >> "$GITHUB_ENV"
           fi 
   
   continuous_delivery_release:
-    if: ${{ needs.check_for_changes.outputs.run_release }} == 'true'
+    if:  ${{ env.run_release == 'true' }}
     needs: check_for_changes
     runs-on: ubuntu-latest
     name: Continuous delivery release
