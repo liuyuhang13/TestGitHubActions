@@ -16,6 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:  
   continuous_delivery_release:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     name: Continuous delivery release
     steps:
