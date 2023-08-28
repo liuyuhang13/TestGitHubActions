@@ -39,7 +39,7 @@ jobs:
           fi 
   
   continuous_delivery_release:
-    if: ${{ needs.outputs.run_release }} == 'true'
+    if: ${{ needs.check_for_changes.outputs.run_release }} == 'true'
     needs: check_for_changes
     runs-on: ubuntu-latest
     name: Continuous delivery release
