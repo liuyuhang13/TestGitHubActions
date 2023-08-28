@@ -29,12 +29,12 @@ jobs:
         id: check_changes
         run: |
           git fetch origin ${{ github.base_ref }} # Fetch the base branch  
-          CHANGED=$(git diff --name-only FETCH_HEAD..HEAD -- 'test/a')  
+          CHANGED=$(git diff --name-only FETCH_HEAD..HEAD -- 'test/a/')  
           if [ -n "$CHANGED" ]; then  
-            echo "Changes detected in test/a"  
+            echo "Changes detected in test/a/"  
             echo "run_release=true" >> "$GITHUB_OUTPUT"
           else  
-            echo "No changes detected in test/a"
+            echo "No changes detected in test/a/"
             echo "run_release=false" >> "$GITHUB_OUTPUT"
           fi 
   
