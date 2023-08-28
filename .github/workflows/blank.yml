@@ -1,0 +1,48 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI on specific folder change
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  check_for_changes:
+    runs-on: ubuntu-latest
+    name: Check for tools folder changes
+    outputs:
+      run_release: ${{ steps.check_changes.outputs.run_release }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git fetch origin ${{ github.base_ref }} # Fetch the base branch  
+          CHANGED=$(git diff --name-only FETCH_HEAD..HEAD -- 'test')  
+          if [ -n "$CHANGED" ]; then  
+            echo "Changes detected in test"  
+            echo "run_release=true" >> $GITHUB_OUTPUT
+          else  
+            echo "No changes detected in test"
+            echo "run_release=false" >> $GITHUB_OUTPUT
+          fi 
+  
+  continuous_delivery_release:
+    if: ${{ needs.check_for_changes.outputs.run_release }} == 'true'
+    needs: check_for_changes
+    runs-on: ubuntu-latest
+    name: Continuous delivery release
+    steps:
+      - name: echo hello
+        run: echo "hello world, ${{needs.check_for_changes.outputs.run_release}}"
