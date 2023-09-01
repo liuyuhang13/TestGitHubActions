@@ -17,6 +17,8 @@ def get_examples_to_upgrade(blob_dir, blob_examples, github_dir):
         version = get_latest_version(blob_example_dir)
         blob_files = get_all_files(os.path.join(blob_example_dir, f'v{version}', MODEL_FOLDER))
         github_files = get_all_files(os.path.join(github_dir, example))
+        print(len(blob_files))
+        print(len(github_files))
         changed = False
         if(len(blob_files) != len(github_files) and len(github_files) != 0):
             print(f'{example} changed, new files added or deleted.')
