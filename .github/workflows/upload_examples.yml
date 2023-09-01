@@ -26,6 +26,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
+            mkdir models
             az storage blob download-batch --account-name promptflowsamples --auth-mode key -d models -s models --pattern samples/**
       - name: Copy github examples to temp dir
         run: |
