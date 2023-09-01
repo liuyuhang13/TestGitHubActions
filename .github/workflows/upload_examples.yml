@@ -37,7 +37,7 @@ jobs:
       - name: Check if any examples upgraded or added
         id: check_changes
         run: |
-          if [ "$(ls -A ${{ env.examples_dir)" ]; then
+          if [ "$(ls -A ${{ env.examples_dir}})" ]; then
             echo "examples dir is not empty, new examples added or upgraded."
             echo "upload_blob=true" >> $GITHUB_OUTPUT
           else
