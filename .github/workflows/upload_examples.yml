@@ -49,7 +49,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az storage blob upload-batch --account-name promptflowsamples --auth-mode key -d models --destination-path samples -s ${{ env.examples_dir }}
+            # az storage blob upload-batch --account-name promptflowsamples --auth-mode key -d models --destination-path samples -s ${{ env.examples_dir }}
       - name: logout
         run: |
           az logout
