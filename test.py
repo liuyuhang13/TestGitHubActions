@@ -58,7 +58,7 @@ def get_all_files(example_dir):
 
 if __name__ == '__main__':
     try:
-        blob_examples = set(os.listdir(BLOB_FILES_DIR, BLOB_BASE_DIR))
+        blob_examples = set(os.listdir(os.path.join(BLOB_FILES_DIR, BLOB_BASE_DIR)))
         github_examples = set(os.listdir(GITHUB_FILES_DIR))
         print(f'examples in blob:{blob_examples}')
         print(f'examples in github:{github_examples}')
