@@ -69,7 +69,7 @@ if __name__ == '__main__':
         new_examples = list(github_examples - blob_examples)
         if len(new_examples):
             print(f'New examples added: {new_examples}')
-        new_examples = [{'example': x, 'new_path': os.path.join(x, 'v1', 'MODEL_FOLDER')} for x in new_examples]
+        new_examples = [{'example': x, 'new_path': os.path.join(x, 'v1', MODEL_FOLDER)} for x in new_examples]
 
         examples_to_upgrade = get_examples_to_upgrade(os.path.join(BLOB_FILES_DIR, BLOB_BASE_DIR), blob_examples, GITHUB_FILES_DIR)
         if len(examples_to_upgrade):
