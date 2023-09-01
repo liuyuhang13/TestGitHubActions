@@ -16,7 +16,7 @@ jobs:
       - name: Clone release branch
         uses: actions/checkout@v3
         with:
-          ref: release
+          ref: main
           path: ${{ env.release_branch }}
 
       - uses: azure/login@v1
