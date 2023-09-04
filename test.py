@@ -15,16 +15,25 @@ def get_examples_to_upgrade(blob_dir, blob_examples, github_dir):
     for example in blob_examples:
         blob_example_dir = os.path.join(blob_dir, example)
         version = get_latest_version(blob_example_dir)
-        blob_files = get_all_files(os.path.join(blob_example_dir, f'v{version}', MODEL_FOLDER))
-        github_files = get_all_files(os.path.join(github_dir, example))
-        print(f"length of blob_example {os.path.join(blob_example_dir, f'v{version}', MODEL_FOLDER)} is {len(blob_files)}")
-        print(f"length of github_example {os.path.join(github_dir, example)} is {len(github_files)}")
+        blob_file_base = os.path.join(blob_example_dir, f'v{version}', MODEL_FOLDER)
+        blob_files = get_all_files(blob_file_base)
+        github_file_base = os.path.join(github_dir, example)
+        github_files = get_all_files(github_file_base)
+        print(f"length of blob_example {blob_file_base} is {len(blob_files)}")
+        print(f"length of github_example {github_file_base} is {len(github_files)}")
         
         changed = False
         if(len(blob_files) != len(github_files) and len(github_files) != 0):
             print(f'{example} changed, new files added or deleted.')
             changed = True
         for blob_file, github_file in zip(blob_files, github_files):
+            blob_file_name = blob_file.split(blob_file_base)[-1]
+            github_file_name = github_file.split(github_file_base)[-1]
+            if blob_file_name != github_file_name:
+                print(f'blob_file:{blob_file}, github_file:{github_file} changed.')
+                changed = True
+                break
+            
             if not filecmp.cmp(blob_file, github_file):
                 print(f'blob_file:{blob_file}, github_file:{github_file} changed.')
                 changed = True
