@@ -80,7 +80,7 @@
           "default": "[]"
         }
       },
-      "description": "Generate a numbered list from given items based on the item_type.\n\nArgs:\n    items (list): A list of items to be numbered.\n\nReturns:\n    str: The formatted numbered list.",
+      "description": "Generate (change) a numbered list from given items based on the item_type.\n\nArgs:\n    items (list): A list of items to be numbered.\n\nReturns:\n    str: The formatted numbered list.",
       "function": "generate_goal"
     }
   }
