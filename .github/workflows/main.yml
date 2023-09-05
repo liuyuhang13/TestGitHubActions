@@ -6,7 +6,7 @@ on:
       targetBranch:
         description: 'Target branch'     
         required: true
-        default: 'release'
+        default: 'test'
       mergeTag:
         description: 'Merge tag or not, default is merge main branch'
         required: true
@@ -15,14 +15,12 @@ on:
       tagName:
         description: 'Tag name to merge'
         required: true
-        default: ''
+        default: 'dummy_tag'
 concurrency: ${{ github.workflow }}
 
 env:
   main_branch: main
   release_branch: ${{ github.event.inputs.targetBranch }}
-  mergeTag: ${{ github.event.inputs.mergeTag }}
-  tagName: ${{ github.event.inputs.tagName }}
   
 permissions:
   # Required to clone repo and push commits
@@ -41,7 +39,7 @@ jobs:
           fetch-depth: 0
  
       - name: Merge main branch to ${{ env.release_branch }}
-        if: env.mergeTag
+        if: github.event.inputs.mergeTag
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_NAME: GitHub
@@ -60,7 +58,7 @@ jobs:
           git push origin ${{ env.release_branch }}
 
       - name: Merge main branch with tag
-        if: env.mergeTag
+        if: github.event.inputs.mergeTag
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_NAME: GitHub
