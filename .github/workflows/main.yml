@@ -57,7 +57,12 @@ jobs:
           echo "${{ env.release_branch }} branch merge main branch"
           git merge origin/main
           git push origin ${{ env.release_branch }}
-
+      - name: test
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_COMMITTER_NAME: GitHub
+          GIT_COMMITTER_EMAIL: noreply@github.com
+        run: echo "e"
       - name: Merge main branch with tag
         if: ${{ github.event.inputs.mergeTag == 'true' }}
         env:
