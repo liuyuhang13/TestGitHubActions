@@ -21,10 +21,14 @@ concurrency: ${{ github.workflow }}
 env:
   main_branch: main
   release_branch: ${{ github.event.inputs.targetBranch }}
+  tagName:  ${{ github.event.inputs.tagName }}
   
 permissions:
   # Required to clone repo and push commits
   contents: write
+  actions: write
+  id-token: write
+  security-events: write
 
 jobs:
   update_release_branch:
