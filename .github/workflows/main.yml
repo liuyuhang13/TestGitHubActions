@@ -26,6 +26,7 @@ env:
 permissions:
   # Required to clone repo and push commits
   contents: write
+  actions: write
 
 jobs:
   update_release_branch:
