@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
  
       - name: Merge main branch to ${{ env.release_branch }}
-        if: ${{ github.event.inputs.mergeTag }} == false
+        if: ! ${{ github.event.inputs.mergeTag }}
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_NAME: GitHub
