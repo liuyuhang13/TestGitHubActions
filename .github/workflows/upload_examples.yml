@@ -1,0 +1,58 @@
+name: Upload examples
+on: workflow_dispatch
+
+env:
+  release_branch: release
+  examples_dir: examples
+  temp_dir: temp
+
+jobs:
+  upload_examples_to_promptflowsamples:
+    name: Upload examples to promptflowsamples
+    if: "github.ref == 'refs/heads/main'"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone release branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: ${{ env.release_branch }}
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZ_CRE }}
+      - name: Download blob storage
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            mkdir models
+            az storage blob download-batch --account-name promptflowsamples --auth-mode key -d models -s models --pattern samples/**
+      - name: Copy github examples to temp dir
+        run: |
+          cp -avr  ${{ env.release_branch }}/${{ env.examples_dir }}/. ${{ env.temp_dir }}
+          ls ${{ env.temp_dir }}
+      - name: Check examples need to be upgraded
+        run: |
+          python ${{ env.release_branch }}/test.py
+      - name: Check if any examples upgraded or added
+        id: check_changes
+        run: |
+          if [ "$(ls -A ${{ env.examples_dir}})" ]; then
+            echo "examples dir is not empty, new examples added or upgraded."
+            echo "upload_blob=true" >> $GITHUB_OUTPUT
+          else
+            echo "examples dir is empty, no need to run upload blob task."
+            echo "upload_blob=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload to blob storage
+        if: steps.check_changes.outputs.upload_blob == 'true'
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az storage blob upload-batch --account-name promptflowsamples --auth-mode key -d models --destination-path samples -s ${{ env.examples_dir }}
+      - name: logout
+        run: |
+          az logout
+        if: always()
+          

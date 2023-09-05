@@ -1,17 +1,32 @@
-name: Update release branch from main
+name: Update target branch from main
 
-on: workflow_dispatch
-  
+on:
+  workflow_dispatch:
+    inputs:
+      targetBranch:
+        description: 'Target branch'     
+        required: true
+        default: 'release'
+      mergeTag:
+        description: 'Merge tag or not, default is merge main branch'
+        required: true
+        type: boolean
+        default: false
+      tagName:
+        description: 'Tag name to merge'
+        required: true
+        default: ''
 concurrency: ${{ github.workflow }}
 
 env:
-  main_dir: main
-  release_dir: release
-  test_dir: test
-
+  main_branch: main
+  release_branch: ${{ github.event.inputs.targetBranch }}
+  mergeTag: ${{ github.event.inputs.mergeTag }}
+  tagName: ${{ github.event.inputs.tagName }}
+  
 permissions:
-  # Required to clone repo
-  contents: read
+  # Required to clone repo and push commits
+  contents: write
 
 jobs:
   update_release_branch:
@@ -23,30 +38,43 @@ jobs:
       - name: Clone main branch
         uses: actions/checkout@v3
         with:
-          path: ${{ env.main_dir }}
-
-      - name: Clone release branch
-        uses: actions/checkout@v3
-        with:
-          ref: release
-          path: ${{ env.release_dir }}
-
-      - name: Copy dirs from main to release
-        run:
-          cp -avr ${{ env.main_dir }}/${{ env.test_dir }}/. ${{ env.release_dir }}/${{ env.test_dir }}
-      - name: Create commit and push
-        env: 
+          fetch-depth: 0
+ 
+      - name: Merge main branch to ${{ env.release_branch }}
+        if: env.mergeTag
+        env:
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_COMMITTER_NAME: GitHub
           GIT_COMMITTER_EMAIL: noreply@github.com
         run: |
-          if [[ -z $(git status -s) ]]; then
-            echo "No updates to the release branch"
-            exit 0
-          fi
-          git status
-          git add -A .
-          # git commit -m "Update release branch" -m "Automated updates made by [$GITHUB_WORKFLOW]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
-          # git push
-        working-directory: ${{ env.release_dir }}
-  
+          echo "main branch fecth origin"
+          git switch main
+          git fetch origin
+
+          echo "switch to ${{ env.release_branch }} branch"
+          git switch ${{ env.release_branch }}
+          git pull
+
+          echo "${{ env.release_branch }} branch merge main branch"
+          git merge origin/main
+          git push origin ${{ env.release_branch }}
+
+      - name: Merge main branch with tag
+        if: env.mergeTag
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_COMMITTER_NAME: GitHub
+          GIT_COMMITTER_EMAIL: noreply@github.com
+        run: |
+          echo "main branch fecth origin"
+          git switch main
+          git fetch origin
+          git fetch --tags origin
+
+          echo "switch to ${{ env.release_branch }} branch"
+          git switch ${{ env.release_branch }}
+          git pull
+
+          echo "${{ env.release_branch }} branch merge main branch with tag ${{ env.tagName }}"
+          git merge ${{ env.tagName }}
+          git push origin ${{ env.release_branch }}
