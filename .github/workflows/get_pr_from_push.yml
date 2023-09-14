@@ -12,5 +12,5 @@ jobs:
 
       - name: test get pr number
         if: github.event_name == 'push'
-        run: echo "$(gh pr view --json number -q .number"
+        run: gh pr view --json number -q .number
         
