@@ -1,7 +1,9 @@
 name: Get PR from push
 
 on:
-  push
+  push:
+    branches:
+      - main
 
 jobs:
   test_step:
