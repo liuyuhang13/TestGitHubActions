@@ -16,7 +16,7 @@ jobs:
         with:
           state: all
       - name: Override version with PR number
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && steps.findPR.outputs.pr
         env:
           PR: ${{ steps.findPr.outputs.pr }}
         run:
