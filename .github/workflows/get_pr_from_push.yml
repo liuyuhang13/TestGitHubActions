@@ -10,8 +10,16 @@ jobs:
     
     steps:
       - name: Override version with PR number
+        id: findPr
+        if: github.event_name == 'push'
+        uses: jwalton/gh-find-current-pr@v1.3.2
+        with:
+          state: all
+      - name: Override version with PR number
         if: github.event_name == 'push'
         env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-        run: gh pr view --json number -q .number
+          PR: ${{ steps.findPr.outputs.pr }}
+        run:
+          echo "${PR}"
+            
         
