@@ -3,14 +3,21 @@ name: Get PR from push
 on:
   push
 
+permissions:
+  # Required to clone repo and push commits
+  contents: read
+
 jobs:
   test_step:
     runs-on: ubuntu-latest
     name: test
     
     steps:
-
-      - name: test get pr number
+      - name: Override version with PR number
         if: github.event_name == 'push'
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_COMMITTER_NAME: GitHub
+          GIT_COMMITTER_EMAIL: noreply@github.com
         run: gh pr view --json number -q .number
         
