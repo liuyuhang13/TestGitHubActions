@@ -1,0 +1,16 @@
+name: Get PR from push
+
+on:
+  push
+
+jobs:
+  test_step:
+    runs-on: ubuntu-latest
+    name: test
+    
+    steps:
+
+      - name: test get pr number
+        if: github.event_name == 'push'
+        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
+        
