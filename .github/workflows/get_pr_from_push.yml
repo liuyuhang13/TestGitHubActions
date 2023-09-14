@@ -12,5 +12,5 @@ jobs:
 
       - name: test get pr number
         if: github.event_name == 'push'
-        run: echo "::set-output name=pull_request_number::$(gh pr view --json number -q .number || echo "")"
+        run: echo "$(gh pr view --json number -q .number"
         
