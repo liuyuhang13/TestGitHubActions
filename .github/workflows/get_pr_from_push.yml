@@ -14,7 +14,7 @@ jobs:
       - name: Override version with PR number
         if: github.event_name == 'push'
         run:
-          echo "${{ github.event.push.size }}"
+          echo "${{ run_id }}"
           echo "${{ github.event.push.head }}"
           echo "${{ github.event.pushevent.head }}"
           echo "${{ github.event.pull_request.number }}"
