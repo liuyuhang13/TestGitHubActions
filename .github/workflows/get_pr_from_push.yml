@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-
+  workflow_dispatch:
+  
 jobs:
   test_step:
     runs-on: ubuntu-latest
@@ -19,6 +20,7 @@ jobs:
           echo "${{ github.event.pushevent.head }}"
           echo "${{ github.event.pull_request.number }}"
 
-
-            
-        
+      - name: manual
+        if: github.event_name == 'workflow_dispatch'
+        run:
+          echo "hello"
